@@ -1,12 +1,15 @@
 from machine import Pin
 import utime
 
-led = Pin(20, Pin.OUT)
+led = Pin(21, Pin.OUT)
+led.off()
+beeper = Pin(18, Pin.OUT)
+beeper.off()
 
-s_short = 0.05
-s_long = 3 * s_short
-letter_pause = s_short
-word_pause = 7 * s_short #included in dictionary as ' ': '.......'
+SIGNAL_SHORT_DURATION = 0.1
+SIGNAL_LONG_DURATION = 3 * SIGNAL_SHORT_DURATION
+PAUSE_LETTER = SIGNAL_SHORT_DURATION
+PAUSE_WORD = 7 * SIGNAL_SHORT_DURATION #included in dictionary as ' ': '.......'
 
 MORSE_CODE_DICT = { 'A':'.-', 'B':'-...', 
                     'C':'-.-.', 'D':'-..', 'E':'.', 
@@ -22,29 +25,78 @@ MORSE_CODE_DICT = { 'A':'.-', 'B':'-...',
                     '7':'--...', '8':'---..', '9':'----.', 
                     '0':'-----', ', ':'--..--', '.':'.-.-.-', 
                     '?':'..--..', '/':'-..-.', '-':'-....-', 
-                    '(':'-.--.', ')':'-.--.-',' ': '.......'}
+                    '(':'-.--.', ')':'-.--.-'}
 
-def message_send(message):
-  global led
+def message_encode(message):
+  encoded_message = ""
   for letter in message:
-    try:
+    if letter == ' ':
+      encoded_message += ' '
+    else:
       letter_code = MORSE_CODE_DICT[letter]
-      print(letter)
-      print(letter_code)
-      for character in letter_code:
-        led.off()
-        utime.sleep(letter_pause)
-        if character == ".":
-          led.on()
-          utime.sleep(s_short)
-        elif character == "-":
-          led.on()
-          utime.sleep(s_long)
-    except:
-      break
+      encoded_message += str(letter_code)
+    encoded_message += 'w'
+  return(encoded_message)
+
+def message_send_led(encoded_message):
+  global led
+  print(encoded_message)
+  for character in encoded_message:
+    # Debug
+    # End of Debug
+    if character == '.':
+      print(character)
+      led.on()
+      utime.sleep(SIGNAL_SHORT_DURATION)
+      led.off()
+      utime.sleep(SIGNAL_SHORT_DURATION)
+    elif character == '-':
+      print(character)
+      led.on()
+      utime.sleep(SIGNAL_LONG_DURATION)
+      led.off()
+      utime.sleep(SIGNAL_SHORT_DURATION)
+    elif character == 'w':
+      print(character)
+      led.off()
+      utime.sleep(PAUSE_LETTER)
+    elif character == ' ':
+      print(character)
+      led.off()
+      utime.sleep(PAUSE_WORD)
+
+def message_send_beeper(encoded_message):
+  global beeper
+  print(encoded_message)
+  for character in encoded_message:
+    # Debug
+    # End of Debug
+    if character == '.':
+      print(character)
+      beeper.on()
+      utime.sleep(SIGNAL_SHORT_DURATION)
+      beeper.off()
+      utime.sleep(SIGNAL_SHORT_DURATION)
+    elif character == '-':
+      print(character)
+      beeper.on()
+      utime.sleep(SIGNAL_LONG_DURATION)
+      beeper.off()
+      utime.sleep(SIGNAL_SHORT_DURATION)
+    elif character == 'w':
+      print(character)
+      beeper.off()
+      utime.sleep(PAUSE_LETTER)
+    elif character == ' ':
+      print(character)
+      beeper.off()
+      utime.sleep(PAUSE_WORD)
+
 while True:
+  message = "Now we try more complex sentense"
+  encoded_message = message_encode(message.upper())
   for led_pin in [ 19,20,21 ]:
     led.off()
     led = Pin(led_pin, Pin.OUT)
-    message = "This message will repeat all the time"
-    message_send(message.upper())
+    message_send_led(encoded_message)
+  message_send_beeper(encoded_message)
