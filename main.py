@@ -39,58 +39,32 @@ def message_encode(message):
     encoded_message += 'w'
   return(encoded_message)
 
-def message_send_led(encoded_message):
-  global led
+def message_send(switch, encoded_message):
+  #global led
   print(encoded_message)
+  switch.off()
   for character in encoded_message:
     # Debug
     # End of Debug
     if character == '.':
       print(character)
-      led.on()
+      switch.on()
       utime.sleep(SIGNAL_SHORT_DURATION)
-      led.off()
-      utime.sleep(SIGNAL_SHORT_DURATION)
-    elif character == '-':
-      print(character)
-      led.on()
-      utime.sleep(SIGNAL_LONG_DURATION)
-      led.off()
-      utime.sleep(SIGNAL_SHORT_DURATION)
-    elif character == 'w':
-      print(character)
-      led.off()
-      utime.sleep(PAUSE_LETTER)
-    elif character == ' ':
-      print(character)
-      led.off()
-      utime.sleep(PAUSE_WORD)
-
-def message_send_beeper(encoded_message):
-  global beeper
-  print(encoded_message)
-  for character in encoded_message:
-    # Debug
-    # End of Debug
-    if character == '.':
-      print(character)
-      beeper.on()
-      utime.sleep(SIGNAL_SHORT_DURATION)
-      beeper.off()
+      switch.off()
       utime.sleep(SIGNAL_SHORT_DURATION)
     elif character == '-':
       print(character)
-      beeper.on()
+      switch.on()
       utime.sleep(SIGNAL_LONG_DURATION)
-      beeper.off()
+      switch.off()
       utime.sleep(SIGNAL_SHORT_DURATION)
     elif character == 'w':
       print(character)
-      beeper.off()
+      switch.off()
       utime.sleep(PAUSE_LETTER)
     elif character == ' ':
       print(character)
-      beeper.off()
+      switch.off()
       utime.sleep(PAUSE_WORD)
 
 while True:
@@ -99,5 +73,5 @@ while True:
   for led_pin in [ 19,20,21 ]:
     led.off()
     led = Pin(led_pin, Pin.OUT)
-    message_send_led(encoded_message)
-  message_send_beeper(encoded_message)
+    message_send(led, encoded_message)
+  message_send(beeper, encoded_message)
