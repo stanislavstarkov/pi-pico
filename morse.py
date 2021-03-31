@@ -27,7 +27,11 @@ MORSE_CODE_DICT = { 'A':'.-',    'B':'-...', 'C':'-.-.',
                     ', ':'--..--', '.':'.-.-.-', 
                     '?':'..--..', '/':'-..-.', '-':'-....-', 
                     '(':'-.--.', ')':'-.--.-'}
-MORSE_CODE_DICT.
+
+MORSE_CODE_DICT_REVERSED = {}
+for k,v in MORSE_CODE_DICT.items():
+  MORSE_CODE_DICT_REVERSED[v] = k
+  
 def message_encode(message):
   encoded_message = ""
   for letter in message:
